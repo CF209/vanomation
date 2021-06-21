@@ -1,0 +1,100 @@
+- id: '1614485237422'
+  alias: Main Lights
+  description: ''
+  trigger:
+  - device_id: da65657ed39627d5644969fbd0253abd
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
+  - device_id: 541d46271737ad64f663cc9150b62a60
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
+  - device_id: adc5858cda8265f8e8536f1e61a3e2e9
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
+  - device_id: 0659f40054b630eb817b5cb9320820d7
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
+  condition: []
+  action:
+  - service: light.toggle
+    data:
+      transition: 0.25
+    entity_id: light.main_lights
+  mode: single
+- id: '1614485323584'
+  alias: Bed Lights
+  description: ''
+  trigger:
+  - device_id: da65657ed39627d5644969fbd0253abd
+    domain: zha
+    platform: device
+    type: remote_button_double_press
+    subtype: remote_button_double_press
+  - device_id: 541d46271737ad64f663cc9150b62a60
+    domain: zha
+    platform: device
+    type: remote_button_double_press
+    subtype: remote_button_double_press
+  - device_id: adc5858cda8265f8e8536f1e61a3e2e9
+    domain: zha
+    platform: device
+    type: remote_button_double_press
+    subtype: remote_button_double_press
+  - device_id: 0659f40054b630eb817b5cb9320820d7
+    domain: zha
+    platform: device
+    type: remote_button_double_press
+    subtype: remote_button_double_press
+  condition: []
+  action:
+  - service: light.toggle
+    data:
+      transition: 0.25
+    entity_id: light.bed_lights
+  mode: single
+- id: '1614555485387'
+  alias: Dim main lights
+  description: ''
+  trigger:
+  - device_id: da65657ed39627d5644969fbd0253abd
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: remote_button_long_press
+  - device_id: 541d46271737ad64f663cc9150b62a60
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: remote_button_long_press
+  - device_id: 0659f40054b630eb817b5cb9320820d7
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: remote_button_long_press
+  condition: []
+  action:
+  - service: script.dim_the_main_lights
+    data: {}
+  mode: single
+- id: '1620171569780'
+  alias: Dim bed lights
+  description: ''
+  trigger:
+  - device_id: adc5858cda8265f8e8536f1e61a3e2e9
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: remote_button_long_press
+  condition: []
+  action:
+  - service: script.dim_the_bed_lights
+    data: {}
+  mode: single

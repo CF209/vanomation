@@ -1,0 +1,78 @@
+esphome:
+  name: water-level-sensor
+  platform: ESP32
+  board: esp32dev
+
+wifi:
+  ssid: "van_wifi"
+  password: "applesauce"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Water-Level-Sensor"
+    password: "1RhvAS8zSqvB"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "yosemite"
+
+ota:
+  password: "yosemite"
+
+sensor:
+  - platform: adc
+    pin: 36
+    name: "Water Level Voltage"
+    id: water_voltage
+    update_interval: 500ms
+    accuracy_decimals: 3
+    filters:
+      - sliding_window_moving_average:
+          window_size: 5
+          send_every: 4
+  - platform: template
+    name: "Water Level Percent"
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    update_interval: 2s
+    lambda: |-
+      if (id(water_voltage).state < 0.0555) {
+        return 100;
+      } else if (id(water_voltage).state < 0.0905) {
+        return 94;
+      } else if (id(water_voltage).state < 0.13) {
+        return 88;
+      } else if (id(water_voltage).state < 0.1625) {
+        return 81;
+      } else if (id(water_voltage).state < 0.189) {
+        return 75;
+      } else if (id(water_voltage).state < 0.217) {
+        return 69;
+      } else if (id(water_voltage).state < 0.2415) {
+        return 62;
+      } else if (id(water_voltage).state < 0.263) {
+        return 56;
+      } else if (id(water_voltage).state < 0.2855) {
+        return 50;
+      } else if (id(water_voltage).state < 0.306) {
+        return 44;
+      } else if (id(water_voltage).state < 0.326) {
+        return 38;
+      } else if (id(water_voltage).state < 0.364) {
+        return 31;
+      } else if (id(water_voltage).state < 0.4215) {
+        return 25;
+      } else if (id(water_voltage).state < 0.486) {
+        return 19;
+      } else if (id(water_voltage).state < 0.55) {
+        return 12;
+      } else if (id(water_voltage).state < 0.61) {
+        return 6;
+      } else {
+        return 0;
+      }

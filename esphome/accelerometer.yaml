@@ -1,0 +1,39 @@
+esphome:
+  name: accelerometer
+  platform: ESP32
+  board: esp32dev
+
+wifi:
+  ssid: "van_wifi"
+  password: "applesauce"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Accelerometer Fallback Hotspot"
+    password: "pSS6T6t76Fz7"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "yosemite"
+
+ota:
+  password: "yosemite"
+
+i2c:
+  sda: 32
+  scl: 33
+
+sensor:
+  - platform: mpu6050
+    address: 0x68
+    update_interval: 200ms
+    accel_x:
+      name: "MPU6050 Accel X"
+    accel_y:
+      name: "MPU6050 Accel Y"
+

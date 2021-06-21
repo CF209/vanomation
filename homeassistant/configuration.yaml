@@ -1,0 +1,62 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+light:
+  - platform: rpi_gpio_pwm
+    leds:
+      - name: Bed Lights         
+        driver: gpio
+        pins: [12]
+        type: simple
+        frequency: 50000
+      - name: Main Lights
+        driver: gpio
+        pins: [13]
+        type: simple
+        frequency: 50000
+
+sensor:
+  - platform: mqtt
+    state_topic: "van/solar/power"
+    name: 'Solar Power'
+    unit_of_measurement: 'W'
+    value_template: '{{ value_json.power }}'
+  - platform: mqtt
+    state_topic: "van/propane"
+    name: 'Propane Level'
+    unit_of_measurement: '%'
+    value_template: '{{ value_json.propane_pct }}'
+  - platform: template
+    sensors:
+      x_angle:
+        friendly_name: "X Angle"
+        unit_of_measurement: "°"
+        value_template: '{{ ((asin((states("sensor.mpu6050_accel_x") | float) / 9.81) * 180 / pi) - 2.8) * -1 }}'
+      y_angle:
+        friendly_name: "Y Angle"
+        unit_of_measurement: "°" 
+        value_template: '{{ ((asin((states("sensor.mpu6050_accel_y") | float) / 9.81) * 180 / pi) + 0.3) }}'
+  - platform: filter
+    name: "Filtered X Angle"
+    entity_id: sensor.x_angle
+    filters:
+      - filter: lowpass
+        time_constant: 5
+        precision: 1
+  - platform: filter
+    name: "Filtered Y Angle"
+    entity_id: sensor.y_angle
+    filters:
+      - filter: lowpass
+        time_constant: 5
+        precision: 1
