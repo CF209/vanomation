@@ -1,7 +1,7 @@
 esphome:
-  name: accelerometer
-  platform: ESP32
-  board: esp32dev
+  name: level_sensor
+  platform: ESP8266
+  board: esp01_1m
 
 wifi:
   ssid: "van_wifi"
@@ -9,8 +9,8 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Accelerometer Fallback Hotspot"
-    password: "pSS6T6t76Fz7"
+    ssid: "Level Sensor Fallback Hotspot"
+    password: "DjeUUbcMRzws"
 
 captive_portal:
 
@@ -19,14 +19,12 @@ logger:
 
 # Enable Home Assistant API
 api:
-  password: "yosemite"
 
 ota:
-  password: "yosemite"
 
 i2c:
-  sda: 32
-  scl: 33
+  sda: 2
+  scl: 14
 
 sensor:
   - platform: mpu6050

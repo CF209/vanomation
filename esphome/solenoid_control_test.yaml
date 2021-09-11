@@ -1,0 +1,28 @@
+esphome:
+  name: solenoid_control_test
+  platform: ESP32
+  board: esp-wrover-kit
+
+wifi:
+  ssid: "van_wifi"
+  password: "applesauce"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Solenoid Control Test"
+    password: "4hBTXVuXJhey"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+switch:
+  - platform: gpio
+    pin: 26
+    name: "Solenoid"

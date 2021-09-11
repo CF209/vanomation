@@ -1,0 +1,74 @@
+esphome:
+  name: water_level_sensor
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: "van_wifi"
+  password: "applesauce"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Water Level Sensor"
+    password: "eBbu8NcQzNd7"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Water Level Voltage"
+    id: water_voltage
+    update_interval: 1s
+    accuracy_decimals: 3
+#    filters:
+#      - sliding_window_moving_average:
+#          window_size: 5
+#          send_every: 4
+  - platform: template
+    name: "Water Level Percent"
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    update_interval: 1s
+    lambda: |-
+      if (id(water_voltage).state < 0.162) {
+        return 100;
+      } else if (id(water_voltage).state < 0.194) {
+        return 93;
+      } else if (id(water_voltage).state < 0.2255) {
+        return 87;
+      } else if (id(water_voltage).state < 0.2505) {
+        return 80;
+      } else if (id(water_voltage).state < 0.2705) {
+        return 73;
+      } else if (id(water_voltage).state < 0.29) {
+        return 67;
+      } else if (id(water_voltage).state < 0.308) {
+        return 60;
+      } else if (id(water_voltage).state < 0.326) {
+        return 53;
+      } else if (id(water_voltage).state < 0.3445) {
+        return 47;
+      } else if (id(water_voltage).state < 0.362) {
+        return 40;
+      } else if (id(water_voltage).state < 0.398) {
+        return 33;
+      } else if (id(water_voltage).state < 0.452) {
+        return 27;
+      } else if (id(water_voltage).state < 0.5045) {
+        return 20;
+      } else if (id(water_voltage).state < 0.562) {
+        return 13;
+      } else if (id(water_voltage).state < 0.6215) {
+        return 7;
+      } else {
+        return 0;
+      }

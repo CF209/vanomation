@@ -11,7 +11,15 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+binary_sensor:
+  - platform: rpi_gpio
+    ports:
+      26: Van Ignition
+    invert_logic: true
+
 light:
+  - platform: torque
+    email: farrah.chris@gmail.com
   - platform: rpi_gpio_pwm
     leds:
       - name: Bed Lights         
@@ -45,7 +53,7 @@ sensor:
       y_angle:
         friendly_name: "Y Angle"
         unit_of_measurement: "°" 
-        value_template: '{{ ((asin((states("sensor.mpu6050_accel_y") | float) / 9.81) * 180 / pi) + 0.3) }}'
+        value_template: '{{ ((asin((states("sensor.mpu6050_accel_y") | float) / 9.81) * 180 / pi) + 0.3) * -1 }}'
   - platform: filter
     name: "Filtered X Angle"
     entity_id: sensor.x_angle
