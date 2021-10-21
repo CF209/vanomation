@@ -13,14 +13,17 @@ from socket import (
     HCI_FILTER,
 )
 
+### Set up MQTT connection
 import paho.mqtt.client as mqtt #import the client1
 broker_address="localhost" 
 client = mqtt.Client("P3") #create new instance
 client.connect(broker_address) #connect to broker
 topic = "van/propane"
 
+### Bluetooth address for the sensor
 ble_address = "90:9a:77:1e:8f:db"
 
+### Set up bluetooth
 if not os.geteuid() == 0:
     sys.exit("script only works as root")
 
@@ -65,6 +68,11 @@ if err < 0:
     ))
 
 
+### This function is essentially the same as the "GetPulseEchoTime2"
+### function from the tank check app. I honestly have no idea what
+### it's doing with the data, but I converted it as well as I could
+### from javascript to python and compared the results of a few readings
+### to the app and the results lined up, so I didn't mess with it any more
 def GetPulseEchoTime(adv):
     def a(a, b):
         c = .5 * 1.2421875
@@ -73,7 +81,6 @@ def GetPulseEchoTime(adv):
             return 0
         else:
             return (a-c)*e
-    
 
     e = len(adv)
     c = adv
@@ -177,6 +184,10 @@ def GetPulseEchoTime(adv):
     return calculated_level
 
 
+### "convertLevelToInches" function from the app
+### translated from javascript to python
+### Again, I'm not really sure what it's doing
+### but it works
 def convertLevelToInches(level, temperature, hwVersionNumber):
     r = temperature
     a = r * r
@@ -195,9 +206,11 @@ def convertLevelToInches(level, temperature, hwVersionNumber):
     return i
 
 
+### "getPercentFromHeight" function from the app
+### translated from javascript to python
 def getPercentFromHeight(e):
-    height = 0.254
-    tank_min_offset = 0.0381
+    height = 0.254 #constant found in the app
+    tank_min_offset = 0.0381 #constant found in the app
 
     n = height
     t = 100 * (e - tank_min_offset) / (n - tank_min_offset)
@@ -209,19 +222,25 @@ def getPercentFromHeight(e):
     return round(t)
 
 
+### This function takes the raw advertisement data from the BLE sensor
+### and processes it into readable data. The functions were taken from
+### decompiling V2.5.1 of the Mopeka Tank Check App using apktool
+### Functions were found in the dist.bundle.js javascript file
 def parse_data(x):
-    e = x[16:41]
-    e = list(map(lambda i: int(i, 16), e))
+    e = x[16:41] #Select the relevant data from the BLE advertisement
+    e = list(map(lambda i: int(i, 16), e)) #Convert data from hex to int
 
+    ### The following code comes from the "class LA extends SA" constructor
     if 1 == (1 & e[3]):
         hwFamily = "xl"
     else:
         hwFamily = "gen2"
-    
+
     hwVersionNumber = 207 & e[3]
     qualityStars = e[3] >> 4 & 3
     battery = e[4] / 256 * 2 + 1.5
 
+    ### The battery percent calculation comes fomr the "getBatteryPercentage()" function
     battery_pct = (battery - 2.2) / .65 * 100
     if battery_pct < 0:
         battery_pct = 0
@@ -229,18 +248,20 @@ def parse_data(x):
         battery_pct = 100
     else:
         battery_pct = round(battery_pct)
-        
 
-    #print(qualityStars)
-    #print(battery_pct)
-
+    ### Back to the "class LA extends SA" constructor
     r = 63 & e[5]
 
     if r == 0:
         temperature = -40
     else:
         temperature = 1.776964 * (r - 25)
-    
+
+    slowUpdateRate = not not (64 & e[5])
+    syncPressed = not not (128 & e[5])
+
+    ### The "else" statement at the end of the constructor
+    ### which the app seems to always enter
     t = 0
     n = 0
     r = 6
@@ -264,30 +285,35 @@ def parse_data(x):
             u += 6
             adv.append((u, 2*A)) #u is a, 2*A is index
             t += 1
-    
-    #print(adv)
 
+
+    ### That is the end of the constructor. The semi-processed data
+    ### is snow stored in the "adv" list. The next modification to
+    ### the data was in a function called "GetPulseEchoTime2"
+    ### which returns a calculated level variable
     level = GetPulseEchoTime(adv)
 
-    #print(level)
-
+    ### The next function takes the level value calculated above and
+    ### converts it to inches of propane. This function was taken from
+    ### the "convertLevelToInches" function in the app
     inches = convertLevelToInches(level, temperature, hwVersionNumber)
 
+    ### The next function takes the level in meters as input
+    ### so we first convert it from inches to meters
     meters = inches / 39.3701
 
+    ### The final function converts the level in meters to a percentage
     percent = getPercentFromHeight(meters)
 
-    #print(percent)
-
-    return percent
+    return percent, qualityStars, battery, temperature
 
 
 while True:
     data = sock.recv(1024)
-    # print bluetooth address from LE Advert. packet
+    # Check if the bluetooth address matches, then decode and send data
     if ':'.join("{0:02x}".format(x) for x in data[12:6:-1]) == ble_address:
         x = ' '.join("{0:02x}".format(x) for x in data).split(' ')
-        propane_pct = parse_data(x)
-        payload = '{"propane_pct":' + str(propane_pct) + '}'
+        propane_pct, propane_qual, propane_bat, propane_temp = parse_data(x)
+        payload = '{"propane_pct":' + str(propane_pct) + ',"propane_qual":' + str(propane_qual) + ',"propane_bat":' + str(propane_bat) + ',"propane_temp":' + str(propane_temp) + '}'
         client.publish(topic,payload)
 

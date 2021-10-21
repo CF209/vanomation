@@ -44,6 +44,20 @@ sensor:
     name: 'Propane Level'
     unit_of_measurement: '%'
     value_template: '{{ value_json.propane_pct }}'
+  - platform: mqtt
+    state_topic: "van/propane"
+    name: 'Propane Sensor Quality'
+    value_template: '{{ value_json.propane_qual }}'
+  - platform: mqtt
+    state_topic: "van/propane"
+    name: 'Propane Sensor Battery'
+    unit_of_measurement: '%'
+    value_template: '{{ value_json.propane_bat }}'
+  - platform: mqtt
+    state_topic: "van/propane"
+    name: 'Propane Sensor Temperature'
+    unit_of_measurement: '°C'
+    value_template: '{{ value_json.propane_temp }}'
   - platform: template
     sensors:
       x_angle:
