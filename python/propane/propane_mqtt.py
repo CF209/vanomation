@@ -305,7 +305,7 @@ def parse_data(x):
     ### The final function converts the level in meters to a percentage
     percent = getPercentFromHeight(meters)
 
-    return percent, qualityStars, battery, temperature
+    return percent, qualityStars, battery_pct, temperature
 
 
 while True:
