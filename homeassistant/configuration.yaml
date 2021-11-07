@@ -38,6 +38,11 @@ sensor:
     unit_of_measurement: 'W'
     value_template: '{{ value_json.power }}'
   - platform: mqtt
+    state_topic: "van/solar/power"
+    name: 'Power Generated Today'
+    unit_of_measurement: 'Ah'
+    value_template: '{{ value_json.power_today }}'
+  - platform: mqtt
     state_topic: "van/propane"
     name: 'Propane Level'
     unit_of_measurement: '%'
@@ -66,7 +71,7 @@ sensor:
       y_angle:
         friendly_name: "Y Angle"
         unit_of_measurement: "°" 
-        value_template: '{{ ((asin((states("sensor.mpu6050_accel_y") | float) / 9.81) * 180 / pi) + 0.3) * -1 }}'
+        value_template: '{{ ((asin((states("sensor.mpu6050_accel_y") | float) / 9.81) * 180 / pi) + 0.3) * 1}}'
   - platform: filter
     name: "Filtered X Angle"
     entity_id: sensor.x_angle

@@ -18,7 +18,8 @@ SCRAPE_DELAY = 1
 
 
 while True:
-    payload = '{"power":' + str(controller.solar_power()) + '}' #Read the current solar power
+    payload = '{"power":' + str(controller.solar_power()) + ',"power_today":' +str(controller.charging_amp_hours_today()) + '}' #Read the current solar power
+    print(payload)
     client.publish(topic,payload)
     time.sleep(SCRAPE_DELAY)
 
