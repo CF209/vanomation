@@ -11,25 +11,23 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-binary_sensor:
-  - platform: rpi_gpio
-    ports:
-      26: Van Ignition
-    invert_logic: true
-
 light:
-  - platform: rpi_gpio_pwm
-    leds:
-      - name: Bed Lights         
-        driver: gpio
-        pins: [12]
-        type: simple
-        frequency: 50000
-      - name: Main Lights
-        driver: gpio
-        pins: [13]
-        type: simple
-        frequency: 50000
+  - platform: mqtt
+    name: "Main Lights ESP"
+    state_topic: "esp32/main_lights/status"
+    command_topic: "esp32/main_lights/switch"
+    payload_off: "OFF"
+    brightness_state_topic: 'esp32/main_lights/brightness'
+    brightness_command_topic: 'esp32/main_lights/brightness/set'
+    on_command_type: 'brightness'
+  - platform: mqtt
+    name: "Bed Lights ESP"
+    state_topic: "esp32/bed_lights/status"
+    command_topic: "esp32/bed_lights/switch"
+    payload_off: "OFF"
+    brightness_state_topic: 'esp32/bed_lights/brightness'
+    brightness_command_topic: 'esp32/bed_lights/brightness/set'
+    on_command_type: 'brightness'
 
 sensor:
   - platform: mqtt

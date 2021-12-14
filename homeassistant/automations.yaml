@@ -25,13 +25,9 @@
   condition: []
   action:
   - service: light.toggle
-    data:
-      transition: 0.25
-    entity_id: light.main_lights
-  - service: light.toggle
-    data:
-      transition: 0.25
-    entity_id: light.bed_lights
+    data: {}
+    target:
+      entity_id: light.main_lights_esp
   mode: single
 - id: '1614485323584'
   alias: Bed Lights
@@ -60,9 +56,9 @@
   condition: []
   action:
   - service: light.toggle
-    data:
-      transition: 0.25
-    entity_id: light.bed_lights
+    data: {}
+    target:
+      entity_id: light.bed_lights_esp
   mode: single
 - id: '1614555485387'
   alias: Dim main lights
@@ -101,32 +97,4 @@
   action:
   - service: script.dim_the_bed_lights
     data: {}
-  mode: single
-- id: '1630607971600'
-  alias: Lock Drawers
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.van_ignition
-    to: 'on'
-  condition: []
-  action:
-  - type: turn_on
-    device_id: d234169403bc54a9ee7bd333fda88984
-    entity_id: switch.solenoid
-    domain: switch
-  mode: single
-- id: '1630608017535'
-  alias: Unlock drawers
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.van_ignition
-    to: 'off'
-  condition: []
-  action:
-  - type: turn_off
-    device_id: d234169403bc54a9ee7bd333fda88984
-    entity_id: switch.solenoid
-    domain: switch
   mode: single

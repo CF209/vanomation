@@ -4,43 +4,42 @@ dim_the_main_lights:
   - choose:
     - conditions:
       - condition: numeric_state
-        entity_id: light.main_lights
+        entity_id: light.main_lights_esp
         value_template: '{{ states.light.main_lights.attributes.brightness }} '
         below: '26'
       sequence:
       - service: light.turn_on
         data:
           brightness: 255
-          transition: 0.25
-        entity_id: light.main_lights
+        target:
+          entity_id: light.main_lights_esp
     default:
     - service: light.turn_on
       data:
         brightness: 25
-        transition: 0.25
-      entity_id: light.main_lights
+      target:
+        entity_id:
+        - light.main_lights_esp
   mode: single
-
 dim_the_bed_lights:
   alias: Dim the bed lights
   sequence:
   - choose:
     - conditions:
       - condition: numeric_state
-        entity_id: light.bed_lights
+        entity_id: light.bed_lights_esp
         value_template: '{{ states.light.bed_lights.attributes.brightness }} '
         below: '26'
       sequence:
       - service: light.turn_on
         data:
           brightness: 255
-          transition: 0.25
-        entity_id: light.bed_lights
+        target:
+          entity_id: light.bed_lights_esp
     default:
     - service: light.turn_on
       data:
         brightness: 25
-        transition: 0.25
-      entity_id: light.bed_lights
+      target:
+        entity_id: light.bed_lights_esp
   mode: single
-

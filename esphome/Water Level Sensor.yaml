@@ -1,5 +1,5 @@
 esphome:
-  name: water_level_sensor
+  name: waterlevelsensor
   platform: ESP8266
   board: esp01_1m
 

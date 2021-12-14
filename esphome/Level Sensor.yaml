@@ -1,5 +1,5 @@
 esphome:
-  name: level_sensor
+  name: levelsensor
   platform: ESP8266
   board: esp01_1m
 

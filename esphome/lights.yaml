@@ -1,0 +1,46 @@
+esphome:
+  name: lights
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+    version: recommended
+    
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "4d3d1e63070ca66f76dfcab80b3fa3d9"
+
+wifi:
+  ssid: "van_wifi"
+  password: "applesauce"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Lights Fallback Hotspot"
+    password: "applesauce"
+
+
+output:
+  - platform: ledc
+    pin: GPIO7
+    id: gpio_7
+    frequency: "25000Hz"
+  - platform: ledc
+    pin: GPIO6
+    id: gpio_6
+    frequency: "25000Hz"
+
+light:
+  - platform: monochromatic
+    output: gpio_7
+    name: "Main Lights"
+  - platform: monochromatic
+    output: gpio_6
+    name: "Bed Lights"
